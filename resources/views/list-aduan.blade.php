@@ -74,12 +74,12 @@ function updateData(id){
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             $.ajax({
-                url:"aduan/" + id + "/close",
+                url:"admin/aduan/" + id + "/close",
                 data:{
                     _method:"PATCH",
                     _token:"{{csrf_token()}}"
                 },
-                type:"PATCH",
+                type:"POST",
                 dataType:"JSON",
                 beforeSend:function(){
                     block("#{{$table_id}}");

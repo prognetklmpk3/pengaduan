@@ -98,11 +98,15 @@ class ResponController extends Controller
         }
     }
 
-    public function update($id) {
+    public function close($id) {
         $data = Aduan::find($id);
         $data->status_close ='1';
-        $data->save();
 
-        return redirect()->route('admin.index');
+        if($data->save()){
+            $response = array('success'=>1,'msg'=>'Berhasil menutup aduan');
+        }else{
+            $response = array('success'=>2,'msg'=>'Gagal menutup aduan');
+        }
+        return $response;
     }
 }

@@ -41,40 +41,91 @@
 <!-- <div class="nk-fmg-body-content"> -->
     <div class="nk-fmg-quick-list nk-block">
         <div class="card">
-            <div class="card-body">
-                <form action="{{ route('admin.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <p for="nama" class="form-label">Nama : {{ $aduan->nama }}</p>
-                        <p for="nama" class="form-label">Nomor Aduan : {{ $aduan->id }}</p>
-                        <p for="nama" class="form-label">Respon Admin</p>
-
-                        @foreach($aduan->respon as $item)
-                        <div class="card w-100" style="background-color: #fcfcfc;">
-                            <div class="card-header d-flex justify-content-between p-3">
-                                @if ($item->pengadu)
-                                <p class="fw-bold mb-0">{{ $item->pengadu->nama }}</p>
-                                @else
-                                <p class="fw-bold mb-0">{{ $item->pegawai->nama }} (Admin)</p>
-                                @endif
-
-                                <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j F, Y', strtotime($item->tanggal)) }}</p>
-                            </div>
-                            <div class="card-body">
-                                <p class="mb-0">
-                                {{ $item->respon }}
-                                </p>
-                            </div>
-                        </div>
-                        @endforeach 
-                        
-                        <input type="hidden" value="{{ $aduan->id }}" name="aduan_id">
-                        <textarea name="respon" class="form-control mt-4" id="exampleFormControlTextarea1" rows="3" placeholder="Masukkan Respon Anda"></textarea>
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p for="nama" class="form-label">Pengadu : {{ $aduan->pengadu->nama }}</p>
+                        <h4 for="nama" class="form-label">{{ $aduan->aduan }}</h4>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="sendButton" value="Send">Kirim</button>
-                </form>
+                    <div class="d-flex flex-column">
+                        <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j F, Y', strtotime($aduan->tanggal)) }}</p>
+                        @if ($aduan->status_close)
+                        <span class='badge badge-secondary ml-auto mt-1'>closed</span>
+                        @else
+                        <span class='badge badge-primary ml-auto mt-1'>open</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                @foreach($aduan->respon as $item)
+                <div class="card w-100" style="background-color: #fcfcfc;">
+                    <div class="card-header d-flex justify-content-between p-3">
+                        @if ($item->pengadu)
+                        <p class="fw-medium mb-0">{{ $item->pengadu->nama }}</p>
+                        @else
+                        <p class="fw-medium mb-0">{{ $item->pegawai->nama }} (Admin)</p>
+                        @endif
+
+                        <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j M, Y H:i', strtotime($item->tanggal)) }}</p>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">
+                        {{ $item->respon }}
+                        </p>
+                    </div>
+                </div>
+                @endforeach 
+                
+                @if (!$aduan->status_close)
+                <textarea name="respon" class="form-control mt-4" id="respon" rows="3" placeholder="Masukkan Respon Anda" required></textarea>
+                <button type="button" onclick="submitdata(this)" class="btn btn-primary mt-3" value="Send">Kirim</button>
+                @endif
             </div>
         </div>
     </div>
 <!-- </div> -->
 @endsection
+
+@push('script')
+<script>
+function submitdata(elm){
+    buttonsmdisable(elm);
+    CustomSwal.fire({
+        icon:'question',
+        text: 'Kirim tanggapan?',
+        showCancelButton: true,
+        confirmButtonText: 'Kirim',
+        cancelButtonText: 'Batal',
+    }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            $.ajax({
+                url:"{{url('crud')}}",
+                data:{
+                    _method:"POST",
+                    _token:"{{csrf_token()}}",
+                    aduan_id: "{{ $aduan->id }}",
+                    respon: respon
+                },
+                type:"POST",
+                dataType:"JSON",
+                success:function(data){
+                    if(data.success == 1){
+                        CustomSwal.fire('Sukses', data.msg, 'success');
+                        window.location.reload();
+                    }else{
+                        CustomSwal.fire('Gagal', data.msg, 'error');
+                        buttonsmenable(elm);
+                    }
+                },
+                error:function(error){
+                    CustomSwal.fire('Gagal', 'terjadi kesalahan sistem', 'error');
+                    console.log(error.XMLHttpRequest);
+                }
+            });
+        }
+    });
+}
+</script>
+@endpush

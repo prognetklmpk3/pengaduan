@@ -118,7 +118,6 @@ $(document).ready(function() {
 
     $('.dataTables_filter').html('<div><div class="input-group"><div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><em class="ti ti-search"></em></span></div><input type="search" class="form-control form-control-sm" placeholder="Type in to Search" aria-controls="tbtariflayanan"></div></div>');
 
-
     function updateData(id,elm){
         buttonsmdisable(elm);
         CustomSwal.fire({
@@ -131,12 +130,12 @@ $(document).ready(function() {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 $.ajax({
-                    url:"{{url('admin')}}/"+id,
+                    url:"{{url('aduan/" . id . "/close')}}/",
                     data:{
                         _method:"PATCH",
                         _token:"{{csrf_token()}}"
                     },
-                    type:"POST",
+                    type:"PATCH",
                     dataType:"JSON",
                     beforeSend:function(){
                         block("#{{$table_id}}");

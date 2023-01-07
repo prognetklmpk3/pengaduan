@@ -13,7 +13,6 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class ResponController extends Controller
 {
-
     public function index() {
         $icon = 'ni ni-dashlite';
         $subtitle = 'List Aduan';
@@ -39,9 +38,9 @@ class ResponController extends Controller
                 return $aksi;
             })
             ->addColumn('status', function($data){
-                $status = "<span class='badge badge-secondary'>closed</span>";
+                $status = "<span class='badge badge-primary'>open</span>";
                 if($data->status_close){
-                    $status = "<span class='badge badge-primary'>open</span>";
+                    $status = "<span class='badge badge-secondary'>closed</span>";
                 }
                 return $status;
             })
@@ -52,7 +51,7 @@ class ResponController extends Controller
     public function show($id) {
         $icon = 'ni ni-dashlite';
         $subtitle = 'Detail Aduan';
-        $aduan = Aduan::with('respon')->where('id', $id)->first();
+        $aduan = Aduan::with('respon', 'pengadu')->where('id', $id)->first();
 
         return view('detail-aduan', compact('aduan','icon','subtitle'));
     }
@@ -84,13 +83,19 @@ class ResponController extends Controller
             //         $request->aduan_foto = $imageName;
             //     }
             // }
-            return redirect()->route('admin.index');
+            
+            if($respon){
+                $response = array('success'=>1,'msg'=>'Berhasil menyimpan tanggapan');
+            }else{
+                $response = array('success'=>2,'msg'=>'Gagal menyimpan tanggapan');
+            }
+            return $response;
         }
     }
 
     public function update($id) {
         $data = Aduan::find($id);
-        $data->status_close ='close';
+        $data->status_close ='1';
         $data->save();
 
         return redirect()->route('admin.index');

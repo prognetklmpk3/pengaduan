@@ -63,6 +63,48 @@
 @push('script')
 <script>
 var table;
+function updateData(id){
+    CustomSwal.fire({
+        icon:'question',
+        text: 'Tutup Aduan?',
+        showCancelButton: true,
+        confirmButtonText: 'Tutup',
+        cancelButtonText: 'Batal',
+    }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            $.ajax({
+                url:"aduan/" + id + "/close",
+                data:{
+                    _method:"PATCH",
+                    _token:"{{csrf_token()}}"
+                },
+                type:"PATCH",
+                dataType:"JSON",
+                beforeSend:function(){
+                    block("#{{$table_id}}");
+                },
+                success:function(data){
+                    if(data.success == 1){
+                        CustomSwal.fire('Sukses', data.msg, 'success');
+                    }else{
+                        CustomSwal.fire('Gagal', data.msg, 'error');
+                    }
+                    unblock("#{{$table_id}}");
+                    RefreshTable('{{$table_id}}',0);
+                },
+                error:function(error){
+                    CustomSwal.fire('Gagal', 'terjadi kesalahan sistem', 'error');
+                    console.log(error.XMLHttpRequest);
+                    unblock("#{{$table_id}}");
+                    RefreshTable('{{$table_id}}',0);
+                }
+            });
+        }else{
+            RefreshTable('{{$table_id}}',0);
+        }
+    });
+}
 $(document).ready(function() {
     table = $('#{{$table_id}}').DataTable({
         processing:true,
@@ -117,53 +159,7 @@ $(document).ready(function() {
     });
 
     $('.dataTables_filter').html('<div><div class="input-group"><div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><em class="ti ti-search"></em></span></div><input type="search" class="form-control form-control-sm" placeholder="Type in to Search" aria-controls="tbtariflayanan"></div></div>');
-
-    function updateData(id,elm){
-        buttonsmdisable(elm);
-        CustomSwal.fire({
-            icon:'question',
-            text: 'Tutup Aduan?',
-            showCancelButton: true,
-            confirmButtonText: 'Tutup',
-            cancelButtonText: 'Batal',
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                $.ajax({
-                    url:"{{url('aduan/" . id . "/close')}}/",
-                    data:{
-                        _method:"PATCH",
-                        _token:"{{csrf_token()}}"
-                    },
-                    type:"PATCH",
-                    dataType:"JSON",
-                    beforeSend:function(){
-                        block("#{{$table_id}}");
-                    },
-                    success:function(data){
-                        if(data.success == 1){
-                            CustomSwal.fire('Sukses', data.msg, 'success');
-                        }else{
-                            CustomSwal.fire('Gagal', data.msg, 'error');
-                        }
-                        unblock("#{{$table_id}}");
-                        RefreshTable('{{$table_id}}',0);
-                    },
-                    error:function(error){
-                        CustomSwal.fire('Gagal', 'terjadi kesalahan sistem', 'error');
-                        console.log(error.XMLHttpRequest);
-                        unblock("#{{$table_id}}");
-                        RefreshTable('{{$table_id}}',0);
-                    }
-                });
-            }else{
-                RefreshTable('{{$table_id}}',0);
-            }
-        });
-    }
-
 });
-
 </script>
 @endpush
 

@@ -46,7 +46,4 @@ Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
     Route::post('/respon', [ResponController::class,'store'])->name('store');
 
     Route::patch('/aduan/{id}/close', [ResponController::class,'close'])->name('close');
-
-
-
 });

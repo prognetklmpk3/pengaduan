@@ -79,7 +79,7 @@
                 
                 @if (!$aduan->status_close)
                 <textarea name="respon" class="form-control mt-4" id="respon" rows="3" placeholder="Masukkan Respon Anda" required></textarea>
-                <button type="button" onclick="submitdata(this)" class="btn btn-primary mt-3" value="Send">Kirim</button>
+                <button type="button" onclick="submitdata()" class="btn btn-primary mt-3" value="Send">Kirim</button>
                 @endif
             </div>
         </div>
@@ -89,8 +89,7 @@
 
 @push('script')
 <script>
-function submitdata(elm){
-    buttonsmdisable(elm);
+function submitdata(){
     CustomSwal.fire({
         icon:'question',
         text: 'Kirim tanggapan?',
@@ -101,12 +100,12 @@ function submitdata(elm){
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             $.ajax({
-                url:"{{url('crud')}}",
+                url:"{{url('admin/respon')}}",
                 data:{
                     _method:"POST",
                     _token:"{{csrf_token()}}",
                     aduan_id: "{{ $aduan->id }}",
-                    respon: respon
+                    respon: $('#respon').val()
                 },
                 type:"POST",
                 dataType:"JSON",
@@ -116,7 +115,6 @@ function submitdata(elm){
                         window.location.reload();
                     }else{
                         CustomSwal.fire('Gagal', data.msg, 'error');
-                        buttonsmenable(elm);
                     }
                 },
                 error:function(error){

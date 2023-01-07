@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Aduan;
-use App\Models\Pengadu;
 use App\Models\AduanRespon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -33,8 +32,10 @@ class ResponController extends Controller
             ->addIndexColumn()
             ->addColumn('aksi', function($data){
                 $aksi = "";
-                $aksi .= "<a title='Lihat' href='/admin/aduan/".$data->id."' class='btn btn-md btn-primary' data-toggle='tooltip' data-placement='bottom' onclick='buttonsmdisable(this)'><i class='ti-eye' ></i></a>";
-                $aksi .= "<a title='Tutup Aduan' href='/admin/aduan/".$data->id."/edit' class='btn btn-md btn-danger ml-2'><i class='ti-close' data-toggle='tooltip' data-placement='bottom' ></i></a> ";
+                $aksi .= "<a title='Lihat' href='/admin/aduan/".$data->id."' class='btn btn-md btn-primary' data-toggle='tooltip' data-placement='bottom' onclick='buttonsmdisable(this)'><i class='ti-eye'></i></a>";
+                if (!$data->status_close) {
+                    $aksi .= "<a title='Tutup Aduan' href='javascript:void(0)' onclick='updateData(\"{$data->id}\")' class='btn btn-md btn-danger ml-2'><i class='ti-close' data-toggle='tooltip' data-placement='bottom'></i></a> ";
+                }
                 return $aksi;
             })
             ->addColumn('status', function($data){

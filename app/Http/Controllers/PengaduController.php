@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Aduan;
 use App\Models\Pengadu;
 use App\Models\JenisAduan;
@@ -18,23 +19,9 @@ class PengaduController extends Controller
         $icon = 'ni ni-dashlite';
         $subtitle = 'Pengaduan';
         $table_id = 'tb_m_help_pengadu';
+
         return view('pengaduan',compact('subtitle','table_id','icon'));
     }
-
-    // public function listData(Request $request){
-    //     $data = Pengadu::all();
-    //     $datatables = DataTables::of($data);
-    //     return $datatables
-    //             ->addIndexColumn()
-    //             ->addColumn('aksi', function($data){
-    //                 $aksi = "";
-    //                 $aksi .= "<a title='Edit Data' href='/Pengadu/".$data->id."/edit' class='btn btn-md btn-primary' data-toggle='tooltip' data-placement='bottom' onclick='buttonsmdisable(this)'><i class='ti-pencil' ></i></a>";
-    //                 $aksi .= "<a title='Delete Data' href='javascript:void(0)' onclick='deleteData(\"{$data->id}\",\"{$data->nim}\",this)' class='btn btn-md btn-danger' data-id='{$data->id}' data-nim='{$data->nim}'><i class='ti-trash' data-toggle='tooltip' data-placement='bottom' ></i></a> ";
-    //                 return $aksi;
-    //             })
-    //             ->rawColumns(['aksi'])
-    //             ->make(true);
-    // }
 
     public function deleteData(Request $request){
         if(Pengadu::destroy($request->id)){
@@ -52,23 +39,56 @@ class PengaduController extends Controller
         return view('create',compact('subtitle','icon','jenis_aduan'));
     }
 
-    public function status(Request $request){
+    public function show($id){
         $icon = 'ni ni-dashlite';
-        $subtitle = 'Status Pengaduan';
+        $subtitle = 'Detail Aduan';
 
-        $aduan = Aduan::find($request->id);
-        $statusbalas = 'Pengaduan Anda belum dibalas';
-        if ($aduan!=null) {
-            $aduan->load('respon');
-            // dd($aduan);
-            if ($aduan->respon->count() > 0) {
-                $statusbalas = 'Pengaduan Anda sudah dibalas';
-            }
-        }else {
-            $statusbalas = 'Nomor pengaduan Anda tidak ditemukan';
+        $aduan = Aduan::with('respon', 'pengadu')->where('id', $id)->first();
+
+        if (!$aduan) {
+            return redirect()->route('welcome');
         }
-        // dd($aduan->respon);
-        return view('status',compact('subtitle','icon','statusbalas','aduan'));
+
+        return view('detail-aduan', compact('aduan','icon','subtitle'));
+    }
+
+    public function respon(Request $request) {
+        $validation = $request->validate([
+            'respon' => 'required',
+            'aduan_id' => 'required',
+            'pengadu_id' => 'required',
+        ],[
+            'respon.required' => "Kolom Respon harus diisi",
+            'aduan_id.required' => "Kolom id aduan harus diisi",
+            'pengadu_id.required' => "Kolom id pengadu harus diisi",
+        ]);
+
+        if($validation){
+            $responid = IdGenerator::generate(['table' => 't_help_aduan_respon', 'length' => 6, 'prefix' =>'R']);
+            $respon = AduanRespon::create([
+                'id' => $responid,
+                'aduan_id' => $request->aduan_id,
+                'pengadu_id' => $request->pengadu_id,
+                'tanggal' => Carbon::now(),
+                'respon' => $request->respon
+            ]);
+
+            // if ($request->aduan_foto) {
+            //     $file = $request->file('aduan_foto');
+            //     if ($file->isValid()) {
+            //         $imageName = md5(now() . "_" . $file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
+            //         $file->storeAs("public/aduanfoto/", $imageName);
+            //         $request->aduan_foto = $imageName;
+            //     }
+            // }
+            
+            if($respon){
+                $response = array('success'=>1,'msg'=>'Berhasil menyimpan tanggapan');
+            }else{
+                $response = array('success'=>2,'msg'=>'Gagal menyimpan tanggapan');
+            }
+            return $response;
+        }
     }
 
     public function thanks($id){
@@ -78,18 +98,8 @@ class PengaduController extends Controller
         return view('thanks',compact('subtitle','icon','pengadu', 'id'));
     }
 
-
-    // public function edit($id){
-    //     $data = Pengadu::find($id);
-    //     return view('edit', [
-    //         'data' => $data
-    //     ]);
-
-    // }
-
     public function store(Request $request)
     {
-
         $validation = $request->validate([
             'nama' => 'required',
             'alamat' => 'required',

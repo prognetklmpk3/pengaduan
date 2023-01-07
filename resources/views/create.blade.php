@@ -183,28 +183,28 @@ function submitdata(elm){
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-                $.ajax({
-                    processData: false,
-                    contentType: false,
-                    enctype: 'multipart/form-data',
-                    url:"{{ url('pengaduan') }}" + "?_token={{ csrf_token() }}",
-                    data:data,
-                    type:"POST",
-                    success:function(data){
-                        if(data.success == 1){
-                            CustomSwal.fire('Sukses', data.msg, 'success');
-                            window.location.href = "pengaduan/thanks/" + data.idPengaduan;
-                        }else{
-                            CustomSwal.fire('Gagal', data.msg, 'error');
-                            buttonsmenable(elm);
-                        }
-                    },
-                    error:function(error){
-                        CustomSwal.fire('Gagal', 'terjadi kesalahan sistem', 'error');
-                        console.log(error.XMLHttpRequest);
+            
+            $.ajax({
+                processData: false,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                url:"{{ url('pengaduan') }}" + "?_token={{ csrf_token() }}",
+                data:data,
+                type:"POST",
+                success:function(data){
+                    if(data.success == 1){
+                        CustomSwal.fire('Sukses', data.msg, 'success');
+                        window.location.href = "pengaduan/thanks/" + data.idPengaduan;
+                    }else{
+                        CustomSwal.fire('Gagal', data.msg, 'error');
+                        buttonsmenable(elm);
                     }
-                });
-
+                },
+                error:function(error){
+                    CustomSwal.fire('Gagal', 'terjadi kesalahan sistem', 'error');
+                    console.log(error.XMLHttpRequest);
+                }
+            });
         }
     });
 }

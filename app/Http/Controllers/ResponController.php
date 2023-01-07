@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Aduan;
+use App\Models\Pegawai;
 use App\Models\AduanRespon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -52,18 +53,21 @@ class ResponController extends Controller
     public function show($id) {
         $icon = 'ni ni-dashlite';
         $subtitle = 'Detail Aduan';
+        $pegawai = Pegawai::first();
         $aduan = Aduan::with('respon', 'pengadu')->where('id', $id)->first();
 
-        return view('detail-aduan', compact('aduan','icon','subtitle'));
+        return view('detail-aduan', compact('aduan','icon','subtitle','pegawai'));
     }
 
     public function store(Request $request) {
         $validation = $request->validate([
             'respon' => 'required',
             'aduan_id' => 'required',
+            'pegawai_id' => 'required',
         ],[
             'respon.required' => "Kolom Respon harus diisi",
-            'aduan_id.required' => "Kolom id aduan harus diisi"
+            'aduan_id.required' => "Kolom id aduan harus diisi",
+            'pegawai_id.required' => "Kolom id pegawai harus diisi"
         ]);
 
         if($validation){
@@ -71,7 +75,7 @@ class ResponController extends Controller
             $respon = AduanRespon::create([
                 'id' => $responid,
                 'aduan_id' => $request->aduan_id,
-                'pegawai_id' => '1',
+                'pegawai_id' => $request->pegawai_id,
                 'tanggal' => Carbon::now(),
                 'respon' => $request->respon
             ]);

@@ -50,20 +50,13 @@
                     <div></div>
                 </div>
 
-                <form action="{{ route('pengaduan.status') }}" method="POST" style="margin-top:100px;">
-                    @csrf
+                <form action="" style="margin-top:40px;" class="mb-4">
                     <div class="d-flex justify-content-center">
                         <div class="col-4 border border-primary rounded">
                             <div class="my-3">
-                                <label for="exampleInputPassword1" class="form-label">Cek Status Pengaduan</label>
-                                <input name="id" type="text" class="form-control" id="message" value="" placeholder="Masukkan nomor pengaduan">
-                                <button type="submit" class="btn btn-primary mt-3" id="sendButton" value="Send">Submit</button>
-                                {{-- <div value=" {{ $respon }}">{{ $respon }}</div> --}}
-                                {{-- @foreach ($pengadu as $user)
-                                @if ($request=null)
-                                    <div>Nomor pengaduan tidak ada</div>
-                                @endif
-                                @endforeach --}}
+                                <label for="exampleInputPassword1" class="form-label">Cek Pengaduan</label>
+                                <input name="id" type="text" class="form-control" id="id" value="" placeholder="Ex: A00123">
+                                <button type="button" onclick="checkPengaduan()" class="btn btn-primary mt-3" id="sendButton" value="Send">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -76,31 +69,46 @@
 @endsection
 @push('script')
 <script>
-    $(document).ready(function(){  
+function checkPengaduan(){
+    CustomSwal.fire({
+        icon:'question',
+        text: 'Yakin kode aduan sudah tepat?',
+        showCancelButton: true,
+        confirmButtonText: 'yakin',
+        cancelButtonText: 'Batal',
+    }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            let aduanId = $('#id').val();
+            window.location.href = "pengaduan/aduan/" + aduanId;
+        }
+    });
+}
 
-      var checkField;
+$(document).ready(function(){  
+    var checkField;
 
-      //checking the length of the value of message and assigning to a variable(checkField) on load
-      checkField = $("input#message").val().length;  
+    //checking the length of the value of message and assigning to a variable(checkField) on load
+    checkField = $("input#message").val().length;  
 
-      var enableDisableButton = function(){         
+    var enableDisableButton = function(){         
         if(checkField > 0){
-          $('#sendButton').removeAttr("disabled");
+            $('#sendButton').removeAttr("disabled");
         } 
         else {
-          $('#sendButton').attr("disabled","disabled");
+            $('#sendButton').attr("disabled","disabled");
         }
-      }        
+    }        
 
-      //calling enableDisableButton() function on load
-      enableDisableButton();            
+    //calling enableDisableButton() function on load
+    enableDisableButton();            
 
-      $('input#message').keyup(function(){ 
+    $('input#message').keyup(function(){ 
         //checking the length of the value of message and assigning to the variable(checkField) on keyup
         checkField = $("input#message").val().length;
         //calling enableDisableButton() function on keyup
         enableDisableButton();
-      });
     });
-    </script>
+});
+</script>
 @endpush

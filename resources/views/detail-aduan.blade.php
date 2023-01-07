@@ -62,7 +62,7 @@
                 <div class="card w-100" style="background-color: #fcfcfc;">
                     <div class="card-header d-flex justify-content-between p-3">
                         @if ($item->pengadu)
-                        <p class="fw-medium mb-0">{{ $item->pengadu->nama }}</p>
+                        <p class="fw-medium mb-0">{{ $item->pengadu->nama }} (Pengadu)</p>
                         @else
                         <p class="fw-medium mb-0">{{ $item->pegawai->nama }} (Admin)</p>
                         @endif
@@ -75,13 +75,21 @@
                         </p>
                     </div>
                 </div>
-                @endforeach 
-                
-                @if (!$aduan->status_close)
-                <textarea name="respon" class="form-control mt-4" id="respon" rows="3" placeholder="Masukkan Respon Anda" required></textarea>
-                <button type="button" onclick="submitdata()" class="btn btn-primary mt-3" value="Send">Kirim</button>
-                @endif
+                @endforeach
             </div>
+            @if (!$aduan->status_close)
+            <div class="card-footer pt-4">
+                @if (isset($pegawai))
+                <p class="fw-bold mb-2">{{ $pegawai->nama }} (Admin)</p>
+                <input id="responden" type="hidden" name="pegawai_id" value="{{ $pegawai->id }}" data-tipe="pegawai">
+                @else
+                <p class="fw-bold mb-2">{{ $aduan->pengadu->nama }} (Pengadu)</p>
+                <input id="responden" type="hidden" name="pengadu_id" value="{{ $aduan->pengadu_id }}" data-tipe="pengadu">
+                @endif
+                <textarea name="respon" class="form-control" id="respon" rows="3" placeholder="Masukkan tanggapan Anda" required></textarea>
+                <button type="button" onclick="submitdata()" class="btn btn-primary mt-3" value="Send">Kirim</button>
+            </div>
+            @endif
         </div>
     </div>
 <!-- </div> -->
@@ -99,16 +107,34 @@ function submitdata(){
     }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
+            let respondenInput = $('#responden');
+            let nameId = respondenInput.attr('name');
+
+            let url = "{{url('pengaduan/respon')}}";
+            if (respondenInput.data('tipe') === "pegawai") {
+                url = "{{url('admin/respon')}}";
+            }
+            
+            var data = new FormData();
+            data.append('_method', "POST");
+            data.append('_token', "{{csrf_token()}}");
+            data.append('aduan_id', "{{ $aduan->id }}");
+            data.append(nameId, respondenInput.val());
+            data.append('respon', $('#respon').val());
+
+            $.ajaxSetup({
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             $.ajax({
-                url:"{{url('admin/respon')}}",
-                data:{
-                    _method:"POST",
-                    _token:"{{csrf_token()}}",
-                    aduan_id: "{{ $aduan->id }}",
-                    respon: $('#respon').val()
-                },
-                type:"POST",
-                dataType:"JSON",
+                url: url,
+                data: data,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                enctype: 'multipart/form-data',
                 success:function(data){
                     if(data.success == 1){
                         CustomSwal.fire('Sukses', data.msg, 'success');

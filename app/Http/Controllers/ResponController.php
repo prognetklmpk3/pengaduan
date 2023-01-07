@@ -40,7 +40,7 @@ class ResponController extends Controller
                 return $aksi;
             })
             ->addColumn('status', function($data){
-                $status = "<span class='badge badge-primary'>open</span>";
+                $status = "<span class='badge badge-primary'>aktif</span>";
                 if($data->status_close){
                     $status = "<span class='badge badge-secondary'>closed</span>";
                 }

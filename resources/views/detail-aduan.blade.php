@@ -52,13 +52,13 @@
                         @if ($aduan->status_close)
                         <span class='badge badge-secondary ml-auto mt-1'>closed</span>
                         @else
-                        <span class='badge badge-primary ml-auto mt-1'>open</span>
+                        <span class='badge badge-primary ml-auto mt-1'>aktif</span>
                         @endif
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                @foreach($aduan->respon as $item)
+                @forelse ($aduan->respon as $item)
                 <div class="card w-100" style="background-color: #fcfcfc;">
                     <div class="card-header d-flex justify-content-between p-3">
                         @if ($item->pengadu)
@@ -75,7 +75,11 @@
                         </p>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="text-center">
+                    Belum ada tanggapan
+                </div>
+                @endforelse
             </div>
             @if (!$aduan->status_close)
             <div class="card-footer pt-4">

@@ -38,6 +38,20 @@ class PengaduController extends Controller
         $jenis_aduan = JenisAduan::all();
         return view('create',compact('subtitle','icon','jenis_aduan'));
     }
+    
+    public function checkAduan($id){
+        $icon = 'ni ni-dashlite';
+        $subtitle = 'Detail Aduan';
+
+        $aduan = Aduan::find($id);
+
+        if($aduan){
+            $response = array('success'=>1,'msg'=>'Berhasil menemukan nomor aduan');
+        }else{
+            $response = array('success'=>2,'msg'=>'Gagal menemukan nomor aduan');
+        }
+        return $response;
+    }
 
     public function show($id){
         $icon = 'ni ni-dashlite';

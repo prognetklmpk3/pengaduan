@@ -21,6 +21,7 @@ Route::get('/',function(){
 
 Route::group(['prefix'=>'pengaduan','as'=>'pengaduan.'], function(){
     Route::get('/',[PengaduController::class,'index'])->name('welcome');
+    Route::get('/aduan/{id}/check',[PengaduController::class,'checkAduan'])->name('check');
     Route::get('/aduan/{id}',[PengaduController::class,'show'])->name('show');
     Route::post('/respon', [PengaduController::class,'respon'])->name('store');
 

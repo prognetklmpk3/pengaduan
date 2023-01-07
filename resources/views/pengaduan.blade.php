@@ -50,18 +50,15 @@
                     <div></div>
                 </div>
 
-                <form action="" style="margin-top:40px;" class="mb-4">
-                    <div class="d-flex justify-content-center">
-                        <div class="col-4 border border-primary rounded">
-                            <div class="my-3">
-                                <label for="exampleInputPassword1" class="form-label">Cek Pengaduan</label>
-                                <input name="id" type="text" class="form-control" id="id" value="" placeholder="Ex: A00123">
-                                <button type="button" onclick="checkPengaduan()" class="btn btn-primary mt-3" id="sendButton" value="Send">Submit</button>
-                            </div>
+                <div class="d-flex justify-content-center mt-4">
+                    <div class="col-4 border border-primary rounded">
+                        <div class="my-3">
+                            <label for="exampleInputPassword1" class="form-label">Cek Pengaduan</label>
+                            <input name="id" type="text" class="form-control" id="id" value="" placeholder="Ex: A00123">
+                            <button type="button" onclick="checkPengaduan()" class="btn btn-primary mt-3" id="sendButton" value="Send">Submit</button>
                         </div>
                     </div>
-                </form>
-
+                </div>
             </div>
         </div>
     </div>
@@ -80,16 +77,30 @@ function checkPengaduan(){
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             let aduanId = $('#id').val();
-            window.location.href = "pengaduan/aduan/" + aduanId;
+            $.ajax({
+                url: "pengaduan/aduan/" + aduanId + "/check",
+                type:"GET",
+                success:function(data){
+                    if(data.success == 1){
+                        window.location.href = "pengaduan/aduan/" + aduanId;
+                    }else{
+                        CustomSwal.fire('Gagal', data.msg, 'error');
+                    }
+                },
+                error:function(error){
+                    CustomSwal.fire('Gagal', 'terjadi kesalahan sistem', 'error');
+                    console.log(error.XMLHttpRequest);
+                }
+            });
         }
     });
 }
 
-$(document).ready(function(){  
+$(document).ready(function(){
     var checkField;
 
     //checking the length of the value of message and assigning to a variable(checkField) on load
-    checkField = $("input#message").val().length;  
+    checkField = $("input#id").val().length;  
 
     var enableDisableButton = function(){         
         if(checkField > 0){
@@ -103,9 +114,9 @@ $(document).ready(function(){
     //calling enableDisableButton() function on load
     enableDisableButton();            
 
-    $('input#message').keyup(function(){ 
+    $('input#id').keyup(function(){ 
         //checking the length of the value of message and assigning to the variable(checkField) on keyup
-        checkField = $("input#message").val().length;
+        checkField = $("input#id").val().length;
         //calling enableDisableButton() function on keyup
         enableDisableButton();
     });

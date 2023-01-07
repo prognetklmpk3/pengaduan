@@ -43,11 +43,13 @@ class PengaduController extends Controller
         $icon = 'ni ni-dashlite';
         $subtitle = 'Detail Aduan';
 
-        $aduan = Aduan::with('respon', 'pengadu')->where('id', $id)->first();
+        $aduan = Aduan::find($id);
 
         if (!$aduan) {
-            return redirect()->route('welcome');
+            return redirect()->route('pengaduan.welcome');
         }
+
+        $aduan->load('respon', 'pengadu');
 
         return view('detail-aduan', compact('aduan','icon','subtitle'));
     }

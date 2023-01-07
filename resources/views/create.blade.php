@@ -183,7 +183,7 @@ function submitdata(elm){
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            
+
             $.ajax({
                 processData: false,
                 contentType: false,
@@ -194,7 +194,7 @@ function submitdata(elm){
                 success:function(data){
                     if(data.success == 1){
                         CustomSwal.fire('Sukses', data.msg, 'success');
-                        window.location.href = "pengaduan/thanks/" + data.idPengaduan;
+                        window.location.href = "pengaduan/thanks/" + data.idAduan;
                     }else{
                         CustomSwal.fire('Gagal', data.msg, 'error');
                         buttonsmenable(elm);

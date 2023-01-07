@@ -43,10 +43,10 @@
         <div class="card">
             <div class="card-body">
                 <div>
-                    <div class="mb-4 fw-bold" style="font-size:20px">Terima kasih {{ $pengadu->nama }} telah menyampaikan laporan, kritik maupun saran perbaikan Anda kepada kami.</div>
-                    <div class="mb-4 fw-bold" style="font-size:20px">Masukan Anda akan segera kami tanggapi</div>
-                    <div class="mb-4 fw-bold" style="font-size:20px">Berikut nomor pengaduan Anda : {{ $id }}</div>
-                    </div>
+                    <h5 style="font-size:24px">Aduan Tersimpan</h5>
+                    <p class="mb-4" style="font-size:16px">Terima kasih <b>{{ $aduan->pengadu->nama }}</b> telah menyampaikan laporan, kritik maupun saran perbaikan Anda kepada kami. Masukan Anda akan segera kami tanggapi</p>
+                    <p class="mb-2" style="font-size:16px">Berikut nomor aduan Anda : <b>{{ $aduan->id }}</b></p>
+                    <a href="pengaduan/aduan/{{ $aduan->id }}" class="btn btn-primary" rel="stylesheet">Lihat Aduan</a>
                 </div>
             </div>
         </div>

@@ -94,8 +94,8 @@ class PengaduController extends Controller
     public function thanks($id){
         $icon = 'ni ni-dashlite';
         $subtitle = 'Terima kasih';
-        $pengadu = Pengadu::find($id);
-        return view('thanks',compact('subtitle','icon','pengadu', 'id'));
+        $aduan = Aduan::find($id)->load('pengadu');
+        return view('thanks',compact('subtitle','icon','aduan'));
     }
 
     public function store(Request $request)
@@ -150,7 +150,7 @@ class PengaduController extends Controller
             ]);
 
             if($pengadu && $aduan){
-                $response = array('success'=>1,'msg'=>'Berhasil tambah data', 'idPengaduan' => $pengaduid);
+                $response = array('success'=>1,'msg'=>'Berhasil tambah data', 'idAduan' => $aduan->id);
             }else{
                 $response = array('success'=>2,'msg'=>'Gagal tambah data');
             }

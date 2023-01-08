@@ -11,7 +11,7 @@
     </div>
     <div class="nk-fmg-actions">
         <div class="btn-group">
-            {{-- <a href="{{ route('pengaduan.create') }}" class="btn btn-sm btn-primary" onclick="buttondisable(this)"><em class="icon fas fa-plus"></em> <span>Ajukan Aduan</span></a> --}}
+            <a href="{{ route('admin.index') }}" class="btn btn-sm btn-primary" onclick="buttondisable(this)"><em class="icon fas fa-arrow-left"></em> <span>Kembali</span></a>
         </div>
     </div>
 </div>
@@ -91,7 +91,7 @@
                 <input id="responden" type="hidden" name="pengadu_id" value="{{ $aduan->pengadu_id }}" data-tipe="pengadu">
                 @endif
                 <textarea name="respon" class="form-control" id="respon" rows="3" placeholder="Masukkan tanggapan Anda" required></textarea>
-                <button type="button" onclick="submitdata()" class="btn btn-primary mt-3" value="Send">Kirim</button>
+                <button type="button" onclick="submitdata()" class="btn btn-primary mt-3" id="sendButton" value="Send">Kirim</button>
             </div>
             @endif
         </div>
@@ -155,5 +155,32 @@ function submitdata(){
         }
     });
 }
+
+$(document).ready(function(){
+    var checkField;
+
+    //checking the length of the value of message and assigning to a variable(checkField) on load
+    checkField = $("textarea#respon").val().length;  
+
+    var enableDisableButton = function(){         
+        if(checkField > 0){
+            $('#sendButton').removeAttr("disabled");
+        } 
+        else {
+            $('#sendButton').attr("disabled","disabled");
+        }
+    }        
+
+    //calling enableDisableButton() function on load
+    enableDisableButton();            
+
+    $('textarea#respon').keyup(function(){ 
+        //checking the length of the value of message and assigning to the variable(checkField) on keyup
+        checkField = $("textarea#respon").val().length;
+        //calling enableDisableButton() function on keyup
+        enableDisableButton();
+    });
+});
+
 </script>
 @endpush

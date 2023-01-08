@@ -57,7 +57,7 @@
     <div class="nk-fmg-quick-list nk-block">
         <div class="card">
             <div class="card-body">
-                Silahkan masukan biodata Anda dengan benar.
+                Silahkan masukan aduan dan biodata Anda dengan lengkap.
             </div>
         </div>
     </div>

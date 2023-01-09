@@ -56,6 +56,12 @@
                         @endif
                     </div>
                 </div>
+                
+                @if ($aduan->aduan_foto)
+                <a class="mt-2 d-inline-block" target="_blank" href="{{ url('/storage/aduanfoto/' . $aduan->aduan_foto) }}">
+                    <img class="img-thumbnail rounded d-inline-block" style="height:70px" src="{{ url('/storage/aduanfoto/' . $aduan->aduan_foto) }}" alt="Attachment Image">
+                </a>
+                @endif
             </div>
             <div class="card-body">
                 @forelse ($aduan->respon as $item)
@@ -73,6 +79,11 @@
                         <p class="mb-0">
                         {{ $item->respon }}
                         </p>
+                        @if ($item->respon_foto)
+                        <a class="mt-2 d-inline-block" target="_blank" href="{{ url('/storage/responfoto/' . $item->respon_foto) }}">
+                            <img class="img-thumbnail rounded d-inline-block" style="height:70px" src="{{ url('/storage/responfoto/' . $item->respon_foto) }}" alt="Attachment Image">
+                        </a>
+                        @endif
                     </div>
                 </div>
                 @empty
@@ -91,7 +102,22 @@
                 <input id="responden" type="hidden" name="pengadu_id" value="{{ $aduan->pengadu_id }}" data-tipe="pengadu">
                 @endif
                 <textarea name="respon" class="form-control" id="respon" rows="3" placeholder="Masukkan tanggapan Anda" required></textarea>
-                <button type="button" onclick="submitdata()" class="btn btn-primary mt-3" id="sendButton" value="Send">Kirim</button>
+
+                <div class="form-group mt-2">
+                    <label for="respon_foto" class="mb-1">Respon foto</label>
+        
+                    <div class="custom-file">
+                        <input type="file" name="respon_foto" id="respon_foto" class="custom-file-input @error('respon_foto') is-invalid @enderror">
+                        <label class="custom-file-label" for="respon_foto">Pilih Gambar</label>
+                        @error('respon_foto')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+
+                <button type="button" onclick="submitdata()" class="btn btn-primary mt-0" id="sendButton" value="Send">Kirim</button>
             </div>
             @endif
         </div>
@@ -113,18 +139,27 @@ function submitdata(){
         if (result.isConfirmed) {
             let respondenInput = $('#responden');
             let nameId = respondenInput.attr('name');
+            let respon_foto = $('#respon_foto')[0].files[0];
 
             let url = "{{url('pengaduan/respon')}}";
             if (respondenInput.data('tipe') === "pegawai") {
                 url = "{{url('admin/respon')}}";
             }
-            
+                 
             var data = new FormData();
             data.append('_method', "POST");
             data.append('_token', "{{csrf_token()}}");
             data.append('aduan_id', "{{ $aduan->id }}");
             data.append(nameId, respondenInput.val());
             data.append('respon', $('#respon').val());
+            if (respon_foto) {
+                data.append('respon_foto', respon_foto);
+            }
+
+            // for (var i = 0; i < files.length; i++) {
+            //         data.append("respon_foto", files[i]);
+            // }
+
 
             $.ajaxSetup({
                 headers:{

@@ -63,6 +63,7 @@ class ResponController extends Controller
         $validation = $request->validate([
             'respon' => 'required',
             'aduan_id' => 'required',
+            'respon_foto' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
             'pegawai_id' => 'required',
         ],[
             'respon.required' => "Kolom Respon harus diisi",
@@ -72,22 +73,24 @@ class ResponController extends Controller
 
         if($validation){
             $responid = IdGenerator::generate(['table' => 't_help_aduan_respon', 'length' => 6, 'prefix' =>'R']);
+
+            if ($request->respon_foto) {
+                $file = $request->file('respon_foto');
+                if ($file->isValid()) {
+                    $imageName = md5(now() . "_" . $file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs("public/responfoto/", $imageName);
+                    $request->respon_foto = $imageName;
+                }
+            }
+
             $respon = AduanRespon::create([
                 'id' => $responid,
                 'aduan_id' => $request->aduan_id,
                 'pegawai_id' => $request->pegawai_id,
                 'tanggal' => Carbon::now(),
-                'respon' => $request->respon
+                'respon' => $request->respon,
+                'respon_foto' => $request->respon_foto,
             ]);
-
-            // if ($request->aduan_foto) {
-            //     $file = $request->file('aduan_foto');
-            //     if ($file->isValid()) {
-            //         $imageName = md5(now() . "_" . $file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
-            //         $file->storeAs("public/aduanfoto/", $imageName);
-            //         $request->aduan_foto = $imageName;
-            //     }
-            // }
             
             if($respon){
                 $response = array('success'=>1,'msg'=>'Berhasil menyimpan tanggapan');

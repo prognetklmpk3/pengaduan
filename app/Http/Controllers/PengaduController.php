@@ -10,6 +10,7 @@ use App\Models\AduanRespon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 
@@ -73,6 +74,7 @@ class PengaduController extends Controller
             'respon' => 'required',
             'aduan_id' => 'required',
             'pengadu_id' => 'required',
+            'respon_foto' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
         ],[
             'respon.required' => "Kolom Respon harus diisi",
             'aduan_id.required' => "Kolom id aduan harus diisi",
@@ -81,12 +83,23 @@ class PengaduController extends Controller
 
         if($validation){
             $responid = IdGenerator::generate(['table' => 't_help_aduan_respon', 'length' => 6, 'prefix' =>'R']);
+
+            if ($request->respon_foto) {
+                $file = $request->file('respon_foto');
+                if ($file->isValid()) {
+                    $imageName = md5(now() . "_" . $file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs("public/responfoto/", $imageName);
+                    $request->respon_foto = $imageName;
+                }
+            }
+
             $respon = AduanRespon::create([
                 'id' => $responid,
                 'aduan_id' => $request->aduan_id,
                 'pengadu_id' => $request->pengadu_id,
                 'tanggal' => Carbon::now(),
-                'respon' => $request->respon
+                'respon' => $request->respon,
+                'respon_foto' => $request->respon_foto
             ]);
 
             // if ($request->aduan_foto) {
@@ -165,8 +178,22 @@ class PengaduController extends Controller
                 'aduan_foto' => $request->aduan_foto,
             ]);
 
+
             if($pengadu && $aduan){
                 $response = array('success'=>1,'msg'=>'Berhasil tambah data', 'idAduan' => $aduan->id);
+                $mail_data = [
+                    'recipient'=>$request->email,
+                    'fromEmail'=>'christinahartono@student.unud.ac.id',
+                    'fromName'=>$request->name,
+                    'subject'=>'Cek aduanmu disini!',
+                    'id'=>$aduan->id
+                ];
+                Mail::send('email-template',$mail_data, function ($message) use ($mail_data){
+                    $message->to($mail_data['recipient'])
+                            ->from($mail_data['fromEmail'], $mail_data ['fromName'])
+                            ->subject ($mail_data['subject']);
+                });
+
             }else{
                 $response = array('success'=>2,'msg'=>'Gagal tambah data');
             }
@@ -203,5 +230,6 @@ class PengaduController extends Controller
             return $response;
         }
     }
+
 
 }

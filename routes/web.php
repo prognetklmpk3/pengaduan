@@ -31,8 +31,6 @@ Route::group(['prefix'=>'pengaduan','as'=>'pengaduan.'], function(){
 
     Route::get('/thanks/{id}',[PengaduController::class,'thanks'])->name('thanks');
 
-    Route::get('/{id}/edit',[PengaduController::class,'edit'])->name('edit');
-    Route::delete('/{id}',[PengaduController::class,'deleteData'])->name('delete');
 
     Route::post('/', [PengaduController::class,'store'])->name('store');
     Route::patch('/{id}', [PengaduController::class,'update'])->name('update');

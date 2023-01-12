@@ -24,15 +24,6 @@ class PengaduController extends Controller
         return view('pengaduan',compact('subtitle','table_id','icon'));
     }
 
-    public function deleteData(Request $request){
-        if(Pengadu::destroy($request->id)){
-            $response = array('success'=>1,'msg'=>'Berhasil hapus data');
-        }else{
-            $response = array('success'=>2,'msg'=>'Gagal menghapus data');
-        }
-        return $response;
-    }
-
     public function create(){
         $icon = 'ni ni-dashlite';
         $subtitle = 'Tambah Data Pengadu';
@@ -101,15 +92,6 @@ class PengaduController extends Controller
                 'respon' => $request->respon,
                 'respon_foto' => $request->respon_foto
             ]);
-
-            // if ($request->aduan_foto) {
-            //     $file = $request->file('aduan_foto');
-            //     if ($file->isValid()) {
-            //         $imageName = md5(now() . "_" . $file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
-            //         $file->storeAs("public/aduanfoto/", $imageName);
-            //         $request->aduan_foto = $imageName;
-            //     }
-            // }
             
             if($respon){
                 $response = array('success'=>1,'msg'=>'Berhasil menyimpan tanggapan');

@@ -45,7 +45,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p for="nama" class="form-label">Pengadu : {{ $aduan->pengadu->nama }}</p>
-                        <h4 for="nama" class="form-label">{{ $aduan->aduan }}</h4>
+                        <p for="nama" class="form-label">Tanggal kejadian : {{ date('j F, Y', strtotime($aduan->tanggal)) }}</p>
                     </div>
                     <div class="d-flex flex-column">
                         <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j F, Y', strtotime($aduan->tanggal)) }}</p>
@@ -56,7 +56,8 @@
                         @endif
                     </div>
                 </div>
-                
+
+                <h4 for="nama" class="form-label mt-3">{{ $aduan->aduan }}</h4>
                 @if ($aduan->aduan_foto)
                 <a class="mt-2 d-inline-block" target="_blank" href="{{ url('/storage/aduanfoto/' . $aduan->aduan_foto) }}">
                     <img class="img-thumbnail rounded d-inline-block" style="height:70px" src="{{ url('/storage/aduanfoto/' . $aduan->aduan_foto) }}" alt="Attachment Image">
@@ -66,14 +67,24 @@
             <div class="card-body">
                 @forelse ($aduan->respon as $item)
                 <div class="card w-100" style="background-color: #fcfcfc;">
-                    <div class="card-header d-flex justify-content-between p-3">
+                    {{-- <div class="card-header d-flex justify-content-between p-3"> --}}
+                    <div>
                         @if ($item->pengadu)
-                        <p class="fw-medium mb-0">{{ $item->pengadu->nama }} (Pengadu)</p>
+                        <div class="card-header px-3" style="background-color:#fff1ca;">
+                            <div class="d-flex justify-content-between"> 
+                                <p class="mb-0 fw-bold">{{ $item->pengadu->nama }}</p>
+                                <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j M, Y H:i', strtotime($item->tanggal)) }}</p>
+                            </div>
+                            <div>
+                                <p>{{ $aduan->pengadu->email }}</p>
+                            </div>
+                        </div>
                         @else
-                        <p class="fw-medium mb-0">{{ $item->pegawai->nama }} (Admin)</p>
+                            <div class="card-header d-flex justify-content-between px-3" style="background-color: #d6eadf">
+                                <p class="mb-0 fw-bold">Admin {{ $item->pegawai->nama }}</p>
+                                <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j M, Y H:i', strtotime($item->tanggal)) }}</p>
+                            </div>
                         @endif
-
-                        <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j M, Y H:i', strtotime($item->tanggal)) }}</p>
                     </div>
                     <div class="card-body">
                         <p class="mb-0">
@@ -95,10 +106,11 @@
             @if (!$aduan->status_close)
             <div class="card-footer pt-4">
                 @if (isset($pegawai))
-                <p class="fw-bold mb-2">{{ $pegawai->nama }} (Admin)</p>
+                <p class="fw-bold mb-2">Admin {{ $pegawai->nama }}</p>
                 <input id="responden" type="hidden" name="pegawai_id" value="{{ $pegawai->id }}" data-tipe="pegawai">
                 @else
-                <p class="fw-bold mb-2">{{ $aduan->pengadu->nama }} (Pengadu)</p>
+                <p class="fw-bold mb-1">{{ $aduan->pengadu->nama }}</p>
+                <p>{{ $aduan->pengadu->email }}</p>
                 <input id="responden" type="hidden" name="pengadu_id" value="{{ $aduan->pengadu_id }}" data-tipe="pengadu">
                 @endif
                 <textarea name="respon" class="form-control" id="respon" rows="3" placeholder="Masukkan tanggapan Anda" required></textarea>

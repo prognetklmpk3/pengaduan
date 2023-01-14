@@ -158,6 +158,7 @@ class PengaduController extends Controller
                 'tanggal' => $request->tanggal,
                 'aduan' => $request->aduan,
                 'aduan_foto' => $request->aduan_foto,
+                'date_create_aduan' => Carbon::now(),
             ]);
 
 

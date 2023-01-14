@@ -20,7 +20,9 @@ class Aduan extends Model
     {
         parent::boot();
         self::creating(function ($model) {
-            $model->id = IdGenerator::generate(['table' => 't_help_aduan', 'length' => 6, 'prefix' =>'A']);
+            // date_default_timezone_set('Asia/Ujung_Pandang');
+            $model->id = time();
+            // $model->id = IdGenerator::generate(['table' => 't_help_aduan', 'length' => 6, 'prefix' =>time()]);
         });
     }
 

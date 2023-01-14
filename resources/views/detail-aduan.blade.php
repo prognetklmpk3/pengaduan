@@ -45,10 +45,11 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p for="nama" class="form-label">Pengadu : {{ $aduan->pengadu->nama }}</p>
-                        <p for="nama" class="form-label">Tanggal kejadian : {{ date('j F, Y', strtotime($aduan->tanggal)) }}</p>
+                        <p for="nama" class="form-label">Email : {{ $aduan->pengadu->email }}</p>
+                        <p for="nama" class="form-label">Tanggal kejadian : {{ date('j F Y', strtotime($aduan->tanggal)) }}</p>
                     </div>
                     <div class="d-flex flex-column">
-                        <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j F, Y', strtotime($aduan->tanggal)) }}</p>
+                        <p class="text-muted small mb-0"><i class="far fa-clock mr-1"></i> {{ date('j M, Y H:i', strtotime($aduan->date_create_aduan)) }}</p>
                         @if ($aduan->status_close)
                         <span class='badge badge-secondary ml-auto mt-1'>closed</span>
                         @else

@@ -8,42 +8,44 @@ use App\Models\Pegawai;
 use App\Models\AduanRespon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
+use Illuminate\Support\Facades\Hash;
 
-class ResponController extends Controller
+class PegawaiController extends Controller
 {
-    public function loginadmin() {
+    public function formLogin() {
         $icon = 'ni ni-dashlite';
-        $subtitle = 'Login Admin';
+        $subtitle = 'Login Pegawai';
         
-        return view('login-admin',compact('subtitle','icon'));
+        return view('login-pegawai',compact('subtitle','icon'));
     }
 
-    public function actionlogin(Request $request) {
+    public function login(Request $request) {
+        $request->validate([
+            'username' => 'required|string',
+            'sso_user_id' => 'required|string',
+        ]);
+
+        $credentials = request(['username', 'sso_user_id']);
         
-        $pegawai = Pegawai::where(['sso_user_id','=',$request->sso_user_id])->first();
+        if(!Auth::guard('pegawai')->attempt($credentials))
+            return array('success'=>2,'msg'=>'username atau password salah');
 
-        // $data = [
-        //     'nama_admin' => $request->input('email'),
-        //     'pass_admin' => $request->input('password'),
-        // ];
+        return array('success'=>1,'msg'=>'Berhasil login');
+    }
 
-        if($pegawai){
-            $response = array('success'=>1,'msg'=>'Berhasil login');
-        }else{
-            $response = array('success'=>2,'msg'=>'Gagal login');
-        }
-        return $response;
+    public function logout()
+    {
+        Auth::logout();
+        request()->session()->invalidate();
+        return redirect('/');
     }
 
     public function index() {
         $icon = 'ni ni-dashlite';
         $subtitle = 'List Aduan';
         $table_id = 'tb_t_help_aduan';
-
-        
         
         return view('list-aduan',compact('subtitle','table_id','icon'));
     }
@@ -104,7 +106,7 @@ class ResponController extends Controller
             ->addIndexColumn()
             ->addColumn('aksi', function($data){
                 $aksi = "";
-                $aksi .= "<a title='Lihat' href='/admin/aduan/".$data->id."' class='btn btn-md btn-primary' data-toggle='tooltip' data-placement='bottom' onclick='buttonsmdisable(this)'><i class='ti-eye'></i></a>";
+                $aksi .= "<a title='Lihat' href='/pegawai/aduan/".$data->id."' class='btn btn-md btn-primary' data-toggle='tooltip' data-placement='bottom' onclick='buttonsmdisable(this)'><i class='ti-eye'></i></a>";
                 if (!$data->status_close) {
                     $aksi .= "<a title='Tutup Aduan' href='javascript:void(0)' onclick='updateData(\"{$data->id}\")' class='btn btn-md btn-danger ml-2'><i class='ti-close' data-toggle='tooltip' data-placement='bottom'></i></a> ";
                 }
@@ -124,7 +126,7 @@ class ResponController extends Controller
     public function show($id) {
         $icon = 'ni ni-dashlite';
         $subtitle = 'Detail Aduan';
-        $pegawai = Pegawai::first();
+        $pegawai = Auth::guard('pegawai')->user();
         $aduan = Aduan::with('respon', 'pengadu')->where('id', $id)->first();
 
         return view('detail-aduan', compact('aduan','icon','subtitle','pegawai'));

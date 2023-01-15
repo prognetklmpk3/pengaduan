@@ -156,7 +156,7 @@ function submitdata(){
 
             let url = "{{url('pengaduan/respon')}}";
             if (respondenInput.data('tipe') === "pegawai") {
-                url = "{{url('admin/respon')}}";
+                url = "{{url('pegawai/respon')}}";
             }
                  
             var data = new FormData();

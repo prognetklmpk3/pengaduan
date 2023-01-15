@@ -41,6 +41,9 @@
 <!-- <div class="nk-fmg-body-content"> -->
     <div class="nk-fmg-quick-list nk-block">
         <div class="card">
+            <div class="card-header">
+                Hai, {{ Auth::guard('pegawai')->user()->nama }}
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="{{$table_id}}" class="small-table table " style="width:100%">
@@ -76,7 +79,7 @@ function updateData(id){
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             $.ajax({
-                url:"admin/aduan/" + id + "/close",
+                url:"pegawai/aduan/" + id + "/close",
                 data:{
                     _method:"PATCH",
                     _token:"{{csrf_token()}}"
@@ -114,7 +117,7 @@ $(document).ready(function() {
         serverSide: true,
         dom: '<"row justify-between g-2 "<"col-7 col-sm-4 text-left"f><"col-5 col-sm-8 text-right"<"datatable-filter"<"d-flex justify-content-end g-2" l>>>><" my-3"t><"row align-items-center"<"col-5 col-sm-12 col-md-6 text-left text-md-left"i><"col-5 col-sm-12 col-md-6 text-md-right"<"d-flex justify-content-end "p>>>',
         ajax: {
-            url: '{{ route("admin.list-aduan") }}',
+            url: '{{ route("pegawai.list-aduan") }}',
             type:"POST",
             data: function(params) {
                 params._token = "{{ csrf_token() }}";

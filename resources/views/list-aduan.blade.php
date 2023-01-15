@@ -45,9 +45,11 @@
                 <div class="table-responsive">
                     <table id="{{$table_id}}" class="small-table table " style="width:100%">
                         <thead style="color:#526484; font-size:11px;" class="thead-light">
+                            <th width="1%">No.</th>
                             <th width="1%">No. Aduan</th>
                             <th width="10%">Nama</th>
                             <th width="10%">Aduan</th>
+                            <th width="10%">Respon</th>
                             <th width="10%">Status</th>
                             <th width="10%">Aksi</th>
                         </thead>
@@ -109,7 +111,6 @@ $(document).ready(function() {
     table = $('#{{$table_id}}').DataTable({
         processing:true,
         autoWidth: true,
-        ordering: true,
         serverSide: true,
         dom: '<"row justify-between g-2 "<"col-7 col-sm-4 text-left"f><"col-5 col-sm-8 text-right"<"datatable-filter"<"d-flex justify-content-end g-2" l>>>><" my-3"t><"row align-items-center"<"col-5 col-sm-12 col-md-6 text-left text-md-left"i><"col-5 col-sm-12 col-md-6 text-md-right"<"d-flex justify-content-end "p>>>',
         ajax: {
@@ -120,6 +121,7 @@ $(document).ready(function() {
             }
         },
         columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             {
                 data: 'id',
                 name: 'id',
@@ -128,8 +130,8 @@ $(document).ready(function() {
                 class: 'text-left'
             },
             {
-                data: 'nama',
-                name: 'nama',
+                data: 'pengadu.nama',
+                name: 'pengadu-nama',
                 orderable: true,
                 searchable: true,
                 class: 'text-left'
@@ -137,6 +139,13 @@ $(document).ready(function() {
             {
                 data: 'aduan',
                 name: 'aduan',
+                orderable: true,
+                searchable: true,
+                class: 'text-left'
+            },
+            {
+                data: 'status_respon',
+                name: 'status-respon',
                 orderable: true,
                 searchable: true,
                 class: 'text-left'

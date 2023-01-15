@@ -38,7 +38,10 @@ Route::group(['prefix'=>'pengaduan','as'=>'pengaduan.'], function(){
 });
 
 Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
-    Route::get('/',[ResponController::class,'index'])->name('index');
+    Route::get('/',[ResponController::class,'loginadmin'])->name('loginadmin');
+    Route::post('actionlogin', [ResponController::class, 'actionlogin'])->name('actionlogin');
+
+    Route::get('/list',[ResponController::class,'index'])->name('index');
     Route::post('/list-aduan',[ResponController::class,'listAduan'])->name('list-aduan');
 
     Route::get('/aduan/{id}',[ResponController::class,'show'])->name('show');

@@ -54,95 +54,94 @@
 </div>
 
 <!-- <div class="nk-fmg-body-content"> -->
-    <div class="nk-fmg-quick-list nk-block">
-        <div class="card">
-            <div class="card-body">
-                Silahkan masukan aduan dan biodata Anda dengan lengkap.
-            </div>
+<div class="nk-fmg-quick-list nk-block">
+    <div class="card">
+        <div class="card-body">
+            <p>Silahkan masukan aduan dan biodata Anda dengan lengkap.</p>
+            <form action="{{ route('pengaduan.store') }}" method="POST" id="formmhs">
+                @csrf
+                    <div class="mb-3">
+                        <label for="nama" class="form-label">Nama</label>
+                        <input name="nama" type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" placeholder="Masukan Nama" aria-describedby="nama">
+                        @error('nama')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="alamat" class="form-label">Alamat</label>
+                        <input name="alamat" type="text" class="form-control  @error('alamat') is-invalid @enderror" id="alamat" placeholder="Masukan Alamat" aria-describedby="alamat">
+                        @error('alamat')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="telepon" class="form-label">Nomor Telepon</label>
+                        <input name="telepon" type="text" class="form-control @error('telepon') is-invalid @enderror" id="telepon" placeholder="Masukan Nomor Telepon" aria-describedby="telepon">
+                        @error('telepon')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input name="email" type="text" class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Masukan Email" aria-describedby="email">
+                        @error('email')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="jenis_aduan" class="form-label">Jenis Aduan</label>
+                        <select name="jenis_aduan_id" id="jenis_aduan" class="form-control">
+                            <option disabled selected>Pilih Jenis Aduan</option>
+                            @foreach ($jenis_aduan as $j_aduan)
+                            <option value=" {{ $j_aduan->id }}"> {{ $j_aduan->jenis_aduan }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tanggal" class="form-label">Tanggal Kejadian</label>
+                        <input name="tanggal" type="date" class="form-control @error('tanggal') is-invalid @enderror" id="tanggal" aria-describedby="tanggal">
+                        @error('tanggal')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="aduan" class="form-label">Isi Aduan</label>
+                        <textarea name="aduan" type="text" class="form-control @error('aduan') is-invalid @enderror" id="aduan" placeholder="Masukan Isi Aduan" aria-describedby="aduan"></textarea>
+                        @error('aduan')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="aduan_foto">Bukti Foto Aduan<span class="text-danger">*</span></label>
+            
+                        <div class="custom-file">
+                            <input type="file" name="aduan_foto" id="aduan_foto" class="custom-file-input @error('aduan_foto') is-invalid @enderror" required>
+                            <label class="custom-file-label" for="aduan_foto">Pilih Gambar</label>
+                            @error('aduan_foto')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" onclick="submitdata(this)"  class="btn btn-primary">Simpan</a>
+            <!-- </div> -->
+            </form>
         </div>
     </div>
-
-<form action="{{ route('pengaduan.store') }}" method="POST" id="formmhs">
-    @csrf
-        <div class="mb-3">
-            <label for="nama" class="form-label">Nama</label>
-            <input name="nama" type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" placeholder="Masukan Nama" aria-describedby="nama">
-            @error('nama')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="alamat" class="form-label">Alamat</label>
-            <input name="alamat" type="text" class="form-control  @error('alamat') is-invalid @enderror" id="alamat" placeholder="Masukan Alamat" aria-describedby="alamat">
-            @error('alamat')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="telepon" class="form-label">Nomor Telepon</label>
-            <input name="telepon" type="text" class="form-control @error('telepon') is-invalid @enderror" id="telepon" placeholder="Masukan Nomor Telepon" aria-describedby="telepon">
-            @error('telepon')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input name="email" type="text" class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Masukan Email" aria-describedby="email">
-            @error('email')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="jenis_aduan" class="form-label">Jenis Aduan</label>
-            <select name="jenis_aduan_id" id="jenis_aduan" class="form-control">
-                <option disabled selected>Pilih Jenis Aduan</option>
-                @foreach ($jenis_aduan as $j_aduan)
-                <option value=" {{ $j_aduan->id }}"> {{ $j_aduan->jenis_aduan }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="tanggal" class="form-label">Tanggal Kejadian</label>
-            <input name="tanggal" type="date" class="form-control @error('tanggal') is-invalid @enderror" id="tanggal" aria-describedby="tanggal">
-            @error('tanggal')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-        <div class="mb-3">
-            <label for="aduan" class="form-label">Isi Aduan</label>
-            <textarea name="aduan" type="text" class="form-control @error('aduan') is-invalid @enderror" id="aduan" placeholder="Masukan Isi Aduan" aria-describedby="aduan"></textarea>
-            @error('aduan')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-        <div class="form-group">
-            <label for="aduan_foto">Bukti Foto Aduan<span class="text-danger">*</span></label>
-
-            <div class="custom-file">
-                <input type="file" name="aduan_foto" id="aduan_foto" class="custom-file-input @error('aduan_foto') is-invalid @enderror" required>
-                <label class="custom-file-label" for="aduan_foto">Pilih Gambar</label>
-                @error('aduan_foto')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-                @enderror
-            </div>
-        </div>
-        <a href="javascript:void(0)" onclick="submitdata(this)"  class="btn btn-primary">Simpan</a>
-<!-- </div> -->
-</form>
+</div>
 @endsection
 
 @push('script')

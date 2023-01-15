@@ -32,9 +32,6 @@ class PengaduController extends Controller
     }
     
     public function checkAduan($id){
-        $icon = 'ni ni-dashlite';
-        $subtitle = 'Detail Aduan';
-
         $aduan = Aduan::find($id);
 
         if($aduan){

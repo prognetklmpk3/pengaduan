@@ -9,26 +9,97 @@ use App\Models\AduanRespon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class ResponController extends Controller
 {
+    public function loginadmin() {
+        $icon = 'ni ni-dashlite';
+        $subtitle = 'Login Admin';
+        
+        return view('login-admin',compact('subtitle','icon'));
+    }
+
+    public function actionlogin(Request $request) {
+        
+        $pegawai = Pegawai::where(['sso_user_id','=',$request->sso_user_id])->first();
+
+        // $data = [
+        //     'nama_admin' => $request->input('email'),
+        //     'pass_admin' => $request->input('password'),
+        // ];
+
+        if($pegawai){
+            $response = array('success'=>1,'msg'=>'Berhasil login');
+        }else{
+            $response = array('success'=>2,'msg'=>'Gagal login');
+        }
+        return $response;
+    }
+
     public function index() {
         $icon = 'ni ni-dashlite';
         $subtitle = 'List Aduan';
         $table_id = 'tb_t_help_aduan';
+
+        
         
         return view('list-aduan',compact('subtitle','table_id','icon'));
     }
 
     public function listAduan() {
-        // $data = Aduan::with('pengadu')->get();
-        $data = DB::table('t_help_aduan')
-            ->join('m_help_pengadu', 't_help_aduan.pengadu_id', '=', 'm_help_pengadu.id')
-            ->select('t_help_aduan.*', 'm_help_pengadu.nama')
-            ->get();
+        $listAduan = Aduan::with('respon', 'pengadu')->get();
+        // $emptyResponAduan = collect();
+        $unresponedAduan = collect();
+        $respondedAduan = collect();
+        foreach ($listAduan as $aduan) {
+            if ($aduan->respon->count() < 1) {
+                $aduan["status_respon"] = "kosong";
+                $unresponedAduan->push($aduan);
+            } else if($aduan->respon->last()->pengadu_id != null) {
+                $aduan["status_respon"] = "belum dibalas";
+                $unresponedAduan->push($aduan);
+            } else {
+                $aduan["status_respon"] = "sudah dibalas";
+                $respondedAduan->push($aduan);
+            }
+        }
 
-        $datatables = DataTables::of($data);
+        //bubble sort
+        for($i = 0; $i < $unresponedAduan->count(); $i++)
+        {
+            // Last i elements are already in place
+            for ($j = 0; $j < $unresponedAduan->count() - $i - 1; $j++)
+            {
+                // traverse the array from 0 to n-i-1
+                // Swap if the element found is greater
+                // than the next element
+                $nilai1 = $unresponedAduan[$j]->date_create_aduan;
+                if ($unresponedAduan[$j]->respon->count() > 0) {
+                    $nilai1 = $unresponedAduan[$j]->respon->last()->tanggal;
+                }
+                
+                $nilai2 = $unresponedAduan[$j+1]->date_create_aduan;
+                if ($unresponedAduan[$j+1]->respon->count() > 0) {
+                    $nilai2 = $unresponedAduan[$j+1]->respon->last()->tanggal;
+                }
+
+                if ($nilai1 < $nilai2) {
+                    $t = $unresponedAduan[$j];
+                    $unresponedAduan[$j] = $unresponedAduan[$j+1];
+                    $unresponedAduan[$j+1] = $t;
+                }
+            }
+        }
+
+        // sorting responded by last respon
+        $respondedAduan = $respondedAduan->sortBy(function ($aduan) { 
+            return $aduan->respon->last()->tanggal; 
+       }, null, true); 
+
+        $sortedAduan = $unresponedAduan->merge($respondedAduan);
+        $datatables = DataTables::of($sortedAduan);
         return $datatables
             ->addIndexColumn()
             ->addColumn('aksi', function($data){

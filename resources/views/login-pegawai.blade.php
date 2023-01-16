@@ -52,7 +52,8 @@
                         <div class="row mb-3 mt-3">
                             <label for="sso_user_id" class="col-sm-4 col-lg-2 col-form-label">Password</label>
                             <div class="col-sm-8 col-lg-10">
-                                <input name="sso_user_id" type="text" class="form-control" id="sso_user_id">
+                                <input name="sso_user_id" type="password" class="form-control mb-3" id="sso_user_id">
+                                <input type="checkbox" onclick="myFunction()"> Show Password
                             </div>
                         </div>
                         <button type="button" onclick="checkLogin()" class="btn btn-primary mt-1 mb-3" id="sendButton" value="Login">Login</button>
@@ -121,5 +122,14 @@ $(document).ready(function(){
         enableDisableButton();
     });
 });
+
+function myFunction() {
+  var x = document.getElementById("sso_user_id");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
 </script>
 @endpush

@@ -150,7 +150,7 @@ function submitdata(elm){
     buttonsmdisable(elm);
     CustomSwal.fire({
         icon:'question',
-        text: 'Simpan Pengaduan Anda?',
+        text: 'Kirim aduan Anda?',
         showCancelButton: true,
         confirmButtonText: 'Simpan',
         cancelButtonText: 'Batal',

@@ -38,7 +38,7 @@
         <div class="card">
             <div class="card-body">
                 <div>
-                    <div>Silahkan nama dan password admin dengan benar.</div>
+                    <div>Silahkan masukkan username dan password pegawai dengan benar.</div>
                 </div>
 
                 <div class="d-flex justify-content-center mt-4">

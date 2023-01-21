@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Aduan;
 use App\Models\Pegawai;
+use App\Models\Pengadu;
 use App\Models\AduanRespon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
-use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class PegawaiController extends Controller
 {
@@ -57,10 +59,10 @@ class PegawaiController extends Controller
         $respondedAduan = collect();
         foreach ($listAduan as $aduan) {
             if ($aduan->respon->count() < 1) {
-                $aduan["status_respon"] = "kosong";
+                $aduan["status_respon"] = "belum dibalas";
                 $unresponedAduan->push($aduan);
             } else if($aduan->respon->last()->pengadu_id != null) {
-                $aduan["status_respon"] = "belum dibalas";
+                $aduan["status_respon"] = "balasan baru";
                 $unresponedAduan->push($aduan);
             } else {
                 $aduan["status_respon"] = "sudah dibalas";
@@ -164,13 +166,28 @@ class PegawaiController extends Controller
                 'respon' => $request->respon,
                 'respon_foto' => $request->respon_foto,
             ]);
-            
+
             if($respon){
-                $response = array('success'=>1,'msg'=>'Berhasil menyimpan tanggapan');
+                $response = array('success'=>1,'msg'=>'Berhasil kirim balasan', 'idRespon' => $respon->id);
+                $aduan = Aduan::find($request->aduan_id);
+                $mail_data = [
+                    'recipient'=>$aduan->pengadu->email,
+                    'fromEmail'=>'christinahartono@student.unud.ac.id',
+                    'fromName'=>$request->name,
+                    'subject'=>'Aduanmu sudah dibalas',
+                    'id'=>$aduan->id
+                ];
+                Mail::send('balasan-email',$mail_data, function ($message) use ($mail_data){
+                    $message->to($mail_data['recipient'])
+                            ->from($mail_data['fromEmail'], $mail_data ['fromName'])
+                            ->subject ($mail_data['subject']);
+                });
+
             }else{
-                $response = array('success'=>2,'msg'=>'Gagal menyimpan tanggapan');
+                $response = array('success'=>2,'msg'=>'Gagal kirim aduan');
             }
             return $response;
+            
         }
     }
 

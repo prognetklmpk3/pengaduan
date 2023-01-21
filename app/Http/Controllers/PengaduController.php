@@ -91,9 +91,9 @@ class PengaduController extends Controller
             ]);
             
             if($respon){
-                $response = array('success'=>1,'msg'=>'Berhasil menyimpan tanggapan');
+                $response = array('success'=>1,'msg'=>'Berhasil mengirim tanggapan');
             }else{
-                $response = array('success'=>2,'msg'=>'Gagal menyimpan tanggapan');
+                $response = array('success'=>2,'msg'=>'Gagal mengirim tanggapan');
             }
             return $response;
         }
@@ -160,7 +160,7 @@ class PengaduController extends Controller
 
 
             if($pengadu && $aduan){
-                $response = array('success'=>1,'msg'=>'Berhasil tambah data', 'idAduan' => $aduan->id);
+                $response = array('success'=>1,'msg'=>'Berhasil kirim aduan', 'idAduan' => $aduan->id);
                 $mail_data = [
                     'recipient'=>$request->email,
                     'fromEmail'=>'christinahartono@student.unud.ac.id',
@@ -175,7 +175,7 @@ class PengaduController extends Controller
                 });
 
             }else{
-                $response = array('success'=>2,'msg'=>'Gagal tambah data');
+                $response = array('success'=>2,'msg'=>'Gagal kirim aduan');
             }
             return $response;
         }

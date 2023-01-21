@@ -1,3 +1,0 @@
-Contoh database :
-
-- db_prodi.sql
